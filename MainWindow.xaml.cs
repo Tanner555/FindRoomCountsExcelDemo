@@ -420,7 +420,10 @@ namespace FindRoomCountsExcelDemo
                             string.IsNullOrEmpty(_roomCountAddress) == false &&
                             int.TryParse(_roomCountValue, out _myCountTryParse) && _myCountTryParse != -1)
                         {
-                            return new DailyRevenueSheetModel(_dateCellValue, _dateCellAddress, _myCountTryParse, _roomCountAddress);
+                            var _dateByMonthAndYear = CalculateDateByMonthAndYear(_dateCellValue);
+                            return new DailyRevenueSheetModel(_dateCellValue, _dateCellAddress, 
+                                _myCountTryParse, _roomCountAddress,
+                                _dateByMonthAndYear.dateByMonth, _dateByMonthAndYear.dateByYear);
                         }
                     }
                 }
@@ -430,6 +433,159 @@ namespace FindRoomCountsExcelDemo
                 SetDebugMessage($"Couldn't Find Spreadsheet at: {_excelFileInfo.FullName}");
             }
             return null;
+        }
+
+        (EDateByMonth dateByMonth, EDateByYear dateByYear) CalculateDateByMonthAndYear(string _dateCellValue)
+        {                           
+            return (CalculateDateByMonth(_dateCellValue), CalculateDateByYear(_dateCellValue));
+        }
+
+        EDateByYear CalculateDateByYear(string _dateCellValue)
+        {
+            if (_dateCellValue.Contains("2017"))
+                return EDateByYear.Y2017;
+            if (_dateCellValue.Contains("2018"))
+                return EDateByYear.Y2018;
+            if (_dateCellValue.Contains("2019"))
+                return EDateByYear.Y2019;
+            if (_dateCellValue.Contains("2020"))
+                return EDateByYear.Y2020;
+            if (_dateCellValue.Contains("2021"))
+                return EDateByYear.Y2021;
+            if (_dateCellValue.Contains("2022"))
+                return EDateByYear.Y2022;
+            if (_dateCellValue.Contains("2023"))
+                return EDateByYear.Y2023;
+            if (_dateCellValue.Contains("2024"))
+                return EDateByYear.Y2024;
+            if (_dateCellValue.Contains("2025"))
+                return EDateByYear.Y2025;
+
+            return EDateByYear.Undecided;
+        }
+
+        EDateByMonth CalculateDateByMonth(string _dateCellValue)
+        {
+            if (DateByMonthIsSpelledOut(_dateCellValue, out var _dateByMonth))
+            {
+                return _dateByMonth;
+            }
+
+            int _monthByNum = -1;
+            //If 2nd Char Has Slash, Month is Single Digit
+            if (_dateCellValue[1] == '/' && 
+                int.TryParse(_dateCellValue[0].ToString(), out _monthByNum))
+            {
+                return RetrieveMonthByNumber(_monthByNum);
+            }
+            //If 2nd Char Isn't A Slash, Month has Two Digits
+            if(_dateCellValue[1] != '/' &&
+                int.TryParse(_dateCellValue.Substring(0, 2), out _monthByNum))
+            {
+                return RetrieveMonthByNumber(_monthByNum);
+            }
+
+            return EDateByMonth.Undecided;
+        }
+
+        EDateByMonth RetrieveMonthByNumber(int _dateNumber)
+        {
+            switch (_dateNumber)
+            {
+                case 1:
+                    return EDateByMonth.January;
+                case 2:
+                    return EDateByMonth.February;
+                case 3:
+                    return EDateByMonth.March;
+                case 4:
+                    return EDateByMonth.April;
+                case 5:
+                    return EDateByMonth.May;
+                case 6:
+                    return EDateByMonth.June;
+                case 7:
+                    return EDateByMonth.July;
+                case 8:
+                    return EDateByMonth.August;
+                case 9:
+                    return EDateByMonth.September;
+                case 10:
+                    return EDateByMonth.October;
+                case 11:
+                    return EDateByMonth.November;
+                case 12:
+                    return EDateByMonth.December;
+                default:
+                    return EDateByMonth.Undecided;
+            }
+        }
+
+        bool DateByMonthIsSpelledOut(string _dateCellValue, out EDateByMonth _dateByMonth)
+        {
+            _dateByMonth = EDateByMonth.Undecided;
+            string _dateLowerCase = _dateCellValue.ToLower();
+            if (_dateLowerCase.Contains("january"))
+            {
+                _dateByMonth = EDateByMonth.January;
+                return true;
+            }
+            if (_dateLowerCase.Contains("february"))
+            {
+                _dateByMonth = EDateByMonth.February;
+                return true;
+            }
+            if (_dateLowerCase.Contains("march"))
+            {
+                _dateByMonth = EDateByMonth.March;
+                return true;
+            }
+            if (_dateLowerCase.Contains("april"))
+            {
+                _dateByMonth = EDateByMonth.April;
+                return true;
+            }
+            if (_dateLowerCase.Contains("may"))
+            {
+                _dateByMonth = EDateByMonth.May;
+                return true;
+            }
+            if (_dateLowerCase.Contains("june"))
+            {
+                _dateByMonth = EDateByMonth.June;
+                return true;
+            }
+            if (_dateLowerCase.Contains("july"))
+            {
+                _dateByMonth = EDateByMonth.July;
+                return true;
+            }
+            if (_dateLowerCase.Contains("august"))
+            {
+                _dateByMonth = EDateByMonth.August;
+                return true;
+            }
+            if (_dateLowerCase.Contains("september"))
+            {
+                _dateByMonth = EDateByMonth.September;
+                return true;
+            }
+            if (_dateLowerCase.Contains("october"))
+            {
+                _dateByMonth = EDateByMonth.October;
+                return true;
+            }
+            if (_dateLowerCase.Contains("november"))
+            {
+                _dateByMonth = EDateByMonth.November;
+                return true;
+            }
+            if (_dateLowerCase.Contains("december"))
+            {
+                _dateByMonth = EDateByMonth.December;
+                return true;
+            }
+            return false;
         }
         #endregion
 
@@ -455,7 +611,9 @@ namespace FindRoomCountsExcelDemo
                         foreach (var _revenueModel in _revenueSheets)
                         {
                             firstSheet.Cells[_myI, 1].Value = _revenueModel.DateCellValue;
-                            firstSheet.Cells[_myI, 2].Value = _revenueModel.RoomCountCellValue;
+                            firstSheet.Cells[_myI, 2].Value = _revenueModel.RoomCountCellValue;                            
+                            //firstSheet.Cells[_myI, 3].Value = _revenueModel.DateByMonth.ToString();
+                            //firstSheet.Cells[_myI, 4].Value = _revenueModel.DateByYear.ToString();
                             _myI++;
                         }
                         _package.SaveAs(_outputSheetInfo);
