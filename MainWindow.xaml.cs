@@ -27,6 +27,31 @@ namespace FindRoomCountsExcelDemo
     /// </summary>
     public partial class MainWindow : Window
     {
+        #region Enums
+        enum EDateByMonth
+        {
+            Undecided = -1,
+            January = 0,
+            February = 1,
+            March = 2,
+            April = 3,
+            May = 4,
+            June = 5,
+            July = 6,
+            August = 7,
+            September = 8,
+            October = 9,
+            November = 10,
+            December = 11
+        }
+
+        enum EDateByYear
+        {
+            Undecided = -1,
+            Y2017 = 0, Y2018 = 1, Y2019 = 2, Y2020 = 3, Y2021 = 4, Y2022 = 5, Y2023 = 6, Y2024 = 7, Y2025 = 8
+        }
+        #endregion
+
         #region Fields
         bool bLoggedFirstMessage = false;
         bool bReadingFiles = false;
@@ -273,12 +298,20 @@ namespace FindRoomCountsExcelDemo
             [OfficeOpenXml.Attributes.EpplusIgnore]
             public string RoomCountCellAddress;
 
-            public DailyRevenueSheetModel(string DateCellValue, string DateCellAddress, int RoomCountCellValue, string RoomCountCellAddress)
+            public EDateByMonth DateByMonth;
+            public EDateByYear DateByYear;
+
+            public DailyRevenueSheetModel(string DateCellValue, string DateCellAddress, 
+                int RoomCountCellValue, string RoomCountCellAddress,
+                EDateByMonth DateByMonth = EDateByMonth.Undecided,
+                EDateByYear DateByYear = EDateByYear.Undecided)
             {
                 this.DateCellValue = DateCellValue;
                 this.DateCellAddress = DateCellAddress;
                 this.RoomCountCellValue = RoomCountCellValue;
                 this.RoomCountCellAddress = RoomCountCellAddress;
+                this.DateByMonth = DateByMonth;
+                this.DateByYear = DateByYear;
             }
         }
         #endregion
