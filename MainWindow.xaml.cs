@@ -91,6 +91,9 @@ namespace FindRoomCountsExcelDemo
             btn_findAndOutputRoomCounts.Click += btn_FindAndOutputRoomCounts_Click;
             btnFindDailyRevFolder.Click += btn_FindDailyRevFolder_Click;
             btnFindOutputRevenueFile.Click += btn_FindOutputRevenueFile_Click;
+
+            SetDailyRevFolderPathToSettingIfValid();
+            SetOutputRevFilePathToSettingIfValid();
         }
         #endregion
 
@@ -147,6 +150,7 @@ namespace FindRoomCountsExcelDemo
                 if (_dialogSuccessful != null && _dialogSuccessful.Value)
                 {
                     DailyRevenueFolderPath.Text = _dialog.SelectedPath;
+                    SetDailyRevFolderPathSetting(_dialog.SelectedPath);
                     SetDebugMessage($"DailyRevFolderPath Successfully Changed.");
                 }
             }
@@ -165,6 +169,7 @@ namespace FindRoomCountsExcelDemo
                 if (ofd.ShowDialog().Value == true)
                 {
                     OutputRevenueFilePath.Text = ofd.FileName;
+                    SetOutputRevFilePathSetting(ofd.FileName);
                     SetDebugMessage($"OutputRevenueFilePath Successfully Changed.");
                 }
             }
@@ -645,6 +650,50 @@ namespace FindRoomCountsExcelDemo
                 _stop = new TimeSpan(DateTime.Now.Ticks);
                 return _stop.Subtract(_start);
             }
+        }
+        #endregion
+
+        #region SettingToMainWindowHelpers
+        void SetDailyRevFolderPathToSettingIfValid()
+        {
+            string _dailyRevSetting = GetDailyRevFolderPathSetting();
+            if (string.IsNullOrEmpty(_dailyRevSetting) == false)
+            {
+                DailyRevenueFolderPath.Text = _dailyRevSetting;
+            }
+        }
+
+        void SetOutputRevFilePathToSettingIfValid()
+        {
+            string _outFileSetting = GetOutputRevFilePathSetting();
+            if (string.IsNullOrEmpty(_outFileSetting) == false)
+            {
+                OutputRevenueFilePath.Text = _outFileSetting;
+            }
+        }
+        #endregion
+
+        #region SettingHelpers
+        string GetDailyRevFolderPathSetting()
+        {
+            return Properties.Settings.Default.DailyRevFolderPathSetting;
+        }
+
+        void SetDailyRevFolderPathSetting(string _folderPath)
+        {
+            Properties.Settings.Default.DailyRevFolderPathSetting = _folderPath;
+            Properties.Settings.Default.Save();
+        }
+
+        string GetOutputRevFilePathSetting()
+        {
+            return Properties.Settings.Default.OutputRevFilePathSetting;
+        }
+
+        void SetOutputRevFilePathSetting(string _filePath)
+        {
+            Properties.Settings.Default.OutputRevFilePathSetting = _filePath;
+            Properties.Settings.Default.Save();
         }
         #endregion
 
