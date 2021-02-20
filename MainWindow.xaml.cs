@@ -137,7 +137,7 @@ namespace FindRoomCountsExcelDemo
             SetDebugMessage($"Grouping Rev Models Month/Year.....");
             var _modelsGroupedIntoMonthAYear = await PutRevModelsIntoMonthAYearGroups(_revenueModels);
             SetDebugMessage($"Writing {_revenueModels.Count} Rev Models To Output Sheet");
-            await WriteModelsToOutputSheet(_revenueModels, _outputRevenueFileInfo);
+            await WriteModelsToOutputSheet(_modelsGroupedIntoMonthAYear, _outputRevenueFileInfo, _revenueModels.Count);
             //Once Executing This Func is All Done
             SetDebugMessage("All done writing revenue data to output excel sheet");
             bIsExecutingRoomCountHandler = false;
@@ -628,7 +628,7 @@ namespace FindRoomCountsExcelDemo
         #endregion
 
         #region WritingToOutputSheet
-        async Task WriteModelsToOutputSheet(List<DailyRevenueSheetModel> _revenueSheets, FileInfo _outputSheetInfo)
+        async Task WriteModelsToOutputSheet(Dictionary<string, List<DailyRevenueSheetModel>> _modelsGroupedIntoMonthAYear, FileInfo _outputSheetInfo, int _revModelCount)
         {
             try
             {
@@ -639,21 +639,25 @@ namespace FindRoomCountsExcelDemo
                     if (firstSheet != null)
                     {
                         int _insertRowIndexRef = 2;
-                        if (firstSheet.Cells.Rows < _revenueSheets.Count + _insertRowIndexRef)
+                        if (firstSheet.Cells.Rows < _revModelCount + _insertRowIndexRef)
                         {
                             SetDebugMessage("Inserting Rows into output sheet...", false);
-                            firstSheet.InsertRow(_insertRowIndexRef, _revenueSheets.Count);
+                            firstSheet.InsertRow(_insertRowIndexRef, _revModelCount);
                         }
 
                         int _myI = 2;
-                        foreach (var _revenueModel in _revenueSheets)
+                        foreach (var (_revGroupKey, _revenueSheets) in _modelsGroupedIntoMonthAYear)
                         {
-                            firstSheet.Cells[_myI, 1].Value = _revenueModel.DateCellValue;
-                            firstSheet.Cells[_myI, 2].Value = _revenueModel.RoomCountCellValue;                            
-                            //firstSheet.Cells[_myI, 3].Value = _revenueModel.DateByMonth.ToString();
-                            //firstSheet.Cells[_myI, 4].Value = _revenueModel.DateByYear.ToString();
-                            _myI++;
+                            foreach (var _revenueModel in _revenueSheets)
+                            {
+                                firstSheet.Cells[_myI, 1].Value = _revenueModel.DateCellValue;
+                                firstSheet.Cells[_myI, 2].Value = _revenueModel.RoomCountCellValue;
+                                firstSheet.Cells[_myI, 3].Value = _revenueModel.DateByMonth.ToString();
+                                firstSheet.Cells[_myI, 4].Value = _revenueModel.DateByYear.ToString();
+                                _myI++;
+                            }
                         }
+
                         _package.SaveAs(_outputSheetInfo);
                     }
                 }
@@ -662,6 +666,7 @@ namespace FindRoomCountsExcelDemo
             }
             catch (Exception ex)
             {
+                MessageBox.Show("ERROR: " + ex.Message);
                 SetDebugMessage("ERROR: " + ex.Message);
             }
         }
@@ -753,6 +758,44 @@ namespace FindRoomCountsExcelDemo
                 Console.WriteLine($"Cell A2 Value   : {secondSheet.Cells["A2"].Text}");
             }
         }
+
+        //async Task OLDWriteModelsToOutputSheetNOGrouping(List<DailyRevenueSheetModel> _revenueSheets, FileInfo _outputSheetInfo)
+        //{
+        //    try
+        //    {
+        //        var _timer = new MySimpleDurationTimer();
+        //        using (var _package = new ExcelPackage(_outputSheetInfo))
+        //        {
+        //            var firstSheet = _package.Workbook.Worksheets.First();
+        //            if (firstSheet != null)
+        //            {
+        //                int _insertRowIndexRef = 2;
+        //                if (firstSheet.Cells.Rows < _revenueSheets.Count + _insertRowIndexRef)
+        //                {
+        //                    SetDebugMessage("Inserting Rows into output sheet...", false);
+        //                    firstSheet.InsertRow(_insertRowIndexRef, _revenueSheets.Count);
+        //                }
+
+        //                int _myI = 2;
+        //                foreach (var _revenueModel in _revenueSheets)
+        //                {
+        //                    firstSheet.Cells[_myI, 1].Value = _revenueModel.DateCellValue;
+        //                    firstSheet.Cells[_myI, 2].Value = _revenueModel.RoomCountCellValue;
+        //                    //firstSheet.Cells[_myI, 3].Value = _revenueModel.DateByMonth.ToString();
+        //                    //firstSheet.Cells[_myI, 4].Value = _revenueModel.DateByYear.ToString();
+        //                    _myI++;
+        //                }
+        //                _package.SaveAs(_outputSheetInfo);
+        //            }
+        //        }
+
+        //        SetDebugMessage("WriteModelsToOutputSheet Duration:" + _timer.StopWithDuration(), false);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        SetDebugMessage("ERROR: " + ex.Message);
+        //    }
+        //}
         #endregion
     }
 }
