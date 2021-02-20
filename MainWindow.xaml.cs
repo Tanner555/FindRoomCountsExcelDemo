@@ -134,6 +134,8 @@ namespace FindRoomCountsExcelDemo
             var _files = await ReadAllFiles(_dailyRevenueFolderInfo.FullName);
             SetDebugMessage($"Reading Data From {myReader.filesFound} Excel Files");
             var _revenueModels = await ReadAndCalculateDataFromExcelFiles(_files);
+            SetDebugMessage($"Grouping Rev Models Month/Year.....");
+            var _modelsGroupedIntoMonthAYear = await PutRevModelsIntoMonthAYearGroups(_revenueModels);
             SetDebugMessage($"Writing {_revenueModels.Count} Rev Models To Output Sheet");
             await WriteModelsToOutputSheet(_revenueModels, _outputRevenueFileInfo);
             //Once Executing This Func is All Done
@@ -591,6 +593,37 @@ namespace FindRoomCountsExcelDemo
                 return true;
             }
             return false;
+        }
+        #endregion
+
+        #region PutRevModelsIntoMonthAYearGroups
+        async Task<Dictionary<string, List<DailyRevenueSheetModel>>> PutRevModelsIntoMonthAYearGroups(List<DailyRevenueSheetModel> _revenueSheets)
+        {
+            var _timer = new MySimpleDurationTimer();
+            var _yearAMonthRevGroups = new Dictionary<string, List<DailyRevenueSheetModel>>();
+            foreach (var _revenueSheet in _revenueSheets)
+            {
+                string _revenueKey = $"{_revenueSheet.DateByMonth}-{_revenueSheet.DateByYear}";
+                if (_yearAMonthRevGroups.ContainsKey(_revenueKey))
+                {
+                    //Contains Key, Add Rev Model To The List
+                    var _revSheetGroupByKey = _yearAMonthRevGroups[_revenueKey];
+                    if (_revSheetGroupByKey != null)
+                    {
+                        _revSheetGroupByKey.Add(_revenueSheet);
+                    }
+                }
+                else
+                {
+                    //Doesn't Contain Key, Create New List W/Model And Add To Dictionary
+                    var _newRevenueGroupFromKey = new List<DailyRevenueSheetModel>();
+                    _newRevenueGroupFromKey.Add(_revenueSheet);
+                    _yearAMonthRevGroups.Add(_revenueKey, _newRevenueGroupFromKey);
+                }
+            }
+            SetDebugMessage("PutRevModelsIntoMonthAYearGroups Duration:" + _timer.StopWithDuration(), false);
+            SetDebugMessage($"Rev MonthAYear Groups Created: {_yearAMonthRevGroups.Count}", false);
+            return _yearAMonthRevGroups;
         }
         #endregion
 
