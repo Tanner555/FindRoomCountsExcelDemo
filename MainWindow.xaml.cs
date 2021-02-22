@@ -448,13 +448,33 @@ namespace FindRoomCountsExcelDemo
         }
 
         (EDateByMonth dateByMonth, EDateByYear dateByYear, int dateByDay) CalculateDateByMonthAndYear(string _dateCellValue)
-        {                           
-            return (CalculateDateByMonth(_dateCellValue), CalculateDateByYear(_dateCellValue), CalculateDateByDay(_dateCellValue));
+        {
+            return (CalculateDateByMonth(_dateCellValue, out var bIsMonthSpelledOut), 
+                CalculateDateByYear(_dateCellValue), 
+                CalculateDateByDay(_dateCellValue, bIsMonthSpelledOut));
         }
 
-        int CalculateDateByDay(string _dateCellValue)
+        int CalculateDateByDay(string _dateCellValue, bool bIsMonthSpelledOut)
         {
-            //TODO: Implement CalculateDateByDay()
+            if (bIsMonthSpelledOut)
+            {
+                return -1;
+            }
+
+            int _dateByNum = -1;
+            //If 4th Char Has Slash, Day is Single Digit
+            if (_dateCellValue[3] == '/' &&
+                int.TryParse(_dateCellValue[2].ToString(), out _dateByNum))
+            {
+                return _dateByNum;
+            }
+            //If 4th Char Isn't A Slash, Day has Two Digits
+            if (_dateCellValue[3] != '/' &&
+                int.TryParse(_dateCellValue.Substring(2, 2), out _dateByNum))
+            {
+                return _dateByNum;
+            }
+
             return -1;
         }
 
@@ -482,13 +502,14 @@ namespace FindRoomCountsExcelDemo
             return EDateByYear.Undecided;
         }
 
-        EDateByMonth CalculateDateByMonth(string _dateCellValue)
+        EDateByMonth CalculateDateByMonth(string _dateCellValue, out bool bIsMonthSpelledOut)
         {
+            bIsMonthSpelledOut = false;
             if (DateByMonthIsSpelledOut(_dateCellValue, out var _dateByMonth))
             {
+                bIsMonthSpelledOut = true;
                 return _dateByMonth;
-            }
-
+            }            
             int _monthByNum = -1;
             //If 2nd Char Has Slash, Month is Single Digit
             if (_dateCellValue[1] == '/' && 
@@ -716,7 +737,7 @@ namespace FindRoomCountsExcelDemo
                                 firstSheet.Cells[_myI, 4].Value = _revenueModel.DateByYear.ToString();
                                 firstSheet.Cells[_myI, 4].Style.Font.Size = 11.0f;
                                 firstSheet.Cells[_myI, 4].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
-                                firstSheet.Cells[_myI, 5].Value = _revenueModel.DateByDay.ToString();
+                                firstSheet.Cells[_myI, 5].Value = _revenueModel.DateByDay;
                                 firstSheet.Cells[_myI, 5].Style.Font.Size = 11.0f;
                                 firstSheet.Cells[_myI, 5].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
                                 //Iterate After Each Model
