@@ -601,7 +601,14 @@ namespace FindRoomCountsExcelDemo
         {
             var _timer = new MySimpleDurationTimer();
             var _yearAMonthRevGroups = new Dictionary<string, List<DailyRevenueSheetModel>>();
-            foreach (var _revenueSheet in _revenueSheets)
+
+            var _organizedRevenueSheets = from _sheet in _revenueSheets
+                                         orderby _sheet.DateByMonth descending
+                                         orderby _sheet.DateByYear descending
+                                         select _sheet;            
+
+            //Iterate Over Every Sheet, Creating New MonthAYear Groups As Needed
+            foreach (var _revenueSheet in _organizedRevenueSheets)
             {
                 string _revenueKey = $"{_revenueSheet.DateByMonth}-{_revenueSheet.DateByYear}";
                 if (_yearAMonthRevGroups.ContainsKey(_revenueKey))
