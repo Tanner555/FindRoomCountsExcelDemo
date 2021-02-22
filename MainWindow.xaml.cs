@@ -633,11 +633,14 @@ namespace FindRoomCountsExcelDemo
             try
             {
                 var _timer = new MySimpleDurationTimer();
+                var _myRandom = new System.Random();
                 using (var _package = new ExcelPackage(_outputSheetInfo))
                 {
                     var firstSheet = _package.Workbook.Worksheets.First();
                     if (firstSheet != null)
                     {
+                        //Clear And Insert Rows As Needed
+                        firstSheet.Cells.Clear();
                         int _insertRowIndexRef = 2;
                         if (firstSheet.Cells.Rows < _revModelCount + _insertRowIndexRef)
                         {
@@ -645,19 +648,54 @@ namespace FindRoomCountsExcelDemo
                             firstSheet.InsertRow(_insertRowIndexRef, _revModelCount);
                         }
 
+                        //Add Headers
+                        firstSheet.Cells[1, 1].Value = "Date";
+                        firstSheet.Cells[1, 1].Style.Font.Italic = true;
+                        firstSheet.Cells[1, 1].Style.Font.Size = 14.0f;
+                        firstSheet.Cells[1, 1].Style.Font.UnderLine = true;
+                        firstSheet.Cells[1, 1].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;                        
+                        firstSheet.Cells[1, 2].Value = "Room Count";
+                        firstSheet.Cells[1, 2].Style.Font.Italic = true;
+                        firstSheet.Cells[1, 2].Style.Font.Size = 14.0f;
+                        firstSheet.Cells[1, 2].Style.Font.UnderLine = true;
+                        firstSheet.Cells[1, 2].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                        //Iterate Through Groups And Write To Sheet
                         int _myI = 2;
                         foreach (var (_revGroupKey, _revenueSheets) in _modelsGroupedIntoMonthAYear)
                         {
+                            int _beginningRange = _myI;
+                            var _ramColor = GetRandomColor(_myRandom);
                             foreach (var _revenueModel in _revenueSheets)
                             {
+                                //Date Cell
                                 firstSheet.Cells[_myI, 1].Value = _revenueModel.DateCellValue;
+                                firstSheet.Cells[_myI, 1].Style.Font.UnderLine = true;
+                                firstSheet.Cells[_myI, 1].Style.Font.Bold = true;
+                                firstSheet.Cells[_myI, 1].Style.Font.Size = 16.0f;
+                                firstSheet.Cells[_myI, 1].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                                //Room Count Cell
                                 firstSheet.Cells[_myI, 2].Value = _revenueModel.RoomCountCellValue;
+                                firstSheet.Cells[_myI, 2].Style.Font.UnderLine = true;
+                                firstSheet.Cells[_myI, 2].Style.Font.Bold = true;
+                                firstSheet.Cells[_myI, 2].Style.Font.Size = 18.0f;
+                                firstSheet.Cells[_myI, 2].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                                //Debugging Month And Year Grouping
                                 firstSheet.Cells[_myI, 3].Value = _revenueModel.DateByMonth.ToString();
+                                firstSheet.Cells[_myI, 3].Style.Font.Size = 11.0f;
+                                firstSheet.Cells[_myI, 3].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
                                 firstSheet.Cells[_myI, 4].Value = _revenueModel.DateByYear.ToString();
+                                firstSheet.Cells[_myI, 4].Style.Font.Size = 11.0f;
+                                firstSheet.Cells[_myI, 4].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
                                 _myI++;
                             }
+                            int _endRange = _myI;
+                            firstSheet.Cells[_beginningRange, 1, _endRange, 4].Style.Fill.SetBackground(_ramColor);
                         }
-
+                        //AutoFit Columns And Save To Sheet
+                        firstSheet.Column(1).AutoFit();
+                        firstSheet.Column(2).AutoFit();
+                        firstSheet.Column(3).AutoFit();
+                        firstSheet.Column(4).AutoFit();
                         _package.SaveAs(_outputSheetInfo);
                     }
                 }
@@ -669,6 +707,11 @@ namespace FindRoomCountsExcelDemo
                 MessageBox.Show("ERROR: " + ex.Message);
                 SetDebugMessage("ERROR: " + ex.Message);
             }
+        }
+
+        System.Drawing.Color GetRandomColor(System.Random _random)
+        {            
+            return System.Drawing.Color.FromArgb(_random.Next(0, 255), _random.Next(0, 255), _random.Next(0, 255));
         }
         #endregion
 
