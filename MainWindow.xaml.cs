@@ -307,11 +307,13 @@ namespace FindRoomCountsExcelDemo
 
             public EDateByMonth DateByMonth;
             public EDateByYear DateByYear;
+            public int DateByDay;
 
             public DailyRevenueSheetModel(string DateCellValue, string DateCellAddress, 
                 int RoomCountCellValue, string RoomCountCellAddress,
                 EDateByMonth DateByMonth = EDateByMonth.Undecided,
-                EDateByYear DateByYear = EDateByYear.Undecided)
+                EDateByYear DateByYear = EDateByYear.Undecided,
+                int DateByDay = -1)
             {
                 this.DateCellValue = DateCellValue;
                 this.DateCellAddress = DateCellAddress;
@@ -319,6 +321,7 @@ namespace FindRoomCountsExcelDemo
                 this.RoomCountCellAddress = RoomCountCellAddress;
                 this.DateByMonth = DateByMonth;
                 this.DateByYear = DateByYear;
+                this.DateByDay = DateByDay;
             }
         }
         #endregion
@@ -430,7 +433,9 @@ namespace FindRoomCountsExcelDemo
                             var _dateByMonthAndYear = CalculateDateByMonthAndYear(_dateCellValue);
                             return new DailyRevenueSheetModel(_dateCellValue, _dateCellAddress, 
                                 _myCountTryParse, _roomCountAddress,
-                                _dateByMonthAndYear.dateByMonth, _dateByMonthAndYear.dateByYear);
+                                _dateByMonthAndYear.dateByMonth, 
+                                _dateByMonthAndYear.dateByYear,
+                                _dateByMonthAndYear.dateByDay);
                         }
                     }
                 }
@@ -442,9 +447,15 @@ namespace FindRoomCountsExcelDemo
             return null;
         }
 
-        (EDateByMonth dateByMonth, EDateByYear dateByYear) CalculateDateByMonthAndYear(string _dateCellValue)
+        (EDateByMonth dateByMonth, EDateByYear dateByYear, int dateByDay) CalculateDateByMonthAndYear(string _dateCellValue)
         {                           
-            return (CalculateDateByMonth(_dateCellValue), CalculateDateByYear(_dateCellValue));
+            return (CalculateDateByMonth(_dateCellValue), CalculateDateByYear(_dateCellValue), CalculateDateByDay(_dateCellValue));
+        }
+
+        int CalculateDateByDay(string _dateCellValue)
+        {
+            //TODO: Implement CalculateDateByDay()
+            return -1;
         }
 
         EDateByYear CalculateDateByYear(string _dateCellValue)
@@ -628,8 +639,9 @@ namespace FindRoomCountsExcelDemo
                     _yearAMonthRevGroups.Add(_revenueKey, _newRevenueGroupFromKey);
                 }
             }
+            SetDebugMessage($"Organized Sheet Count: {_organizedRevenueSheets.Count()}", false);
             SetDebugMessage("PutRevModelsIntoMonthAYearGroups Duration:" + _timer.StopWithDuration(), false);
-            SetDebugMessage($"Rev MonthAYear Groups Created: {_yearAMonthRevGroups.Count}", false);
+            SetDebugMessage($"Rev MonthAYear Groups Created: {_yearAMonthRevGroups.Count}", false);            
             return _yearAMonthRevGroups;
         }
         #endregion
@@ -676,7 +688,7 @@ namespace FindRoomCountsExcelDemo
                             if (_myI > 2)
                             {
                                 //Add Empty Space After Every Group
-                                firstSheet.Cells[_myI, 1, _myI, 4].Clear();                                
+                                firstSheet.Cells[_myI, 1, _myI, 6].Clear();                                
                                 //Iterate At The Beginning of Each Group After Adding Space
                                 _myI++;
                             }
@@ -697,25 +709,29 @@ namespace FindRoomCountsExcelDemo
                                 firstSheet.Cells[_myI, 2].Style.Font.Bold = true;
                                 firstSheet.Cells[_myI, 2].Style.Font.Size = 18.0f;
                                 firstSheet.Cells[_myI, 2].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
-                                //Debugging Month And Year Grouping
+                                //Debugging Month, Year and Date Grouping
                                 firstSheet.Cells[_myI, 3].Value = _revenueModel.DateByMonth.ToString();
                                 firstSheet.Cells[_myI, 3].Style.Font.Size = 11.0f;
                                 firstSheet.Cells[_myI, 3].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
                                 firstSheet.Cells[_myI, 4].Value = _revenueModel.DateByYear.ToString();
                                 firstSheet.Cells[_myI, 4].Style.Font.Size = 11.0f;
                                 firstSheet.Cells[_myI, 4].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                                firstSheet.Cells[_myI, 5].Value = _revenueModel.DateByDay.ToString();
+                                firstSheet.Cells[_myI, 5].Style.Font.Size = 11.0f;
+                                firstSheet.Cells[_myI, 5].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
                                 //Iterate After Each Model
                                 _myI++;
                             }
                             //Set Ending Iterative Count And Fill Background W/Random Color
                             int _endRange = _myI;
-                            firstSheet.Cells[_beginningRange, 1, _endRange, 4].Style.Fill.SetBackground(_ramColor);
+                            firstSheet.Cells[_beginningRange, 1, _endRange, 5].Style.Fill.SetBackground(_ramColor);
                         }
                         //AutoFit Columns And Save To Sheet
                         firstSheet.Column(1).AutoFit();
                         firstSheet.Column(2).AutoFit();
                         firstSheet.Column(3).AutoFit();
                         firstSheet.Column(4).AutoFit();
+                        firstSheet.Column(5).AutoFit();
                         _package.SaveAs(_outputSheetInfo);
                     }
                 }
