@@ -449,26 +449,18 @@ namespace FindRoomCountsExcelDemo
 
         (EDateByMonth dateByMonth, EDateByYear dateByYear, int dateByDay) CalculateDateByMonthAndYear(string _dateCellValue)
         {
-            return (CalculateDateByMonth(_dateCellValue, out var bIsMonthSpelledOut), 
-                CalculateDateByYear(_dateCellValue), 
-                CalculateDateByDay(_dateCellValue, bIsMonthSpelledOut));
+            var _dateByMonth = CalculateDateByMonth(_dateCellValue, out var bIsMonthSpelledOut);
+            return (_dateByMonth, CalculateDateByYear(_dateCellValue), 
+                CalculateDateByDay(_dateCellValue, bIsMonthSpelledOut, _dateByMonth));
         }
 
-        int CalculateDateByDay(string _dateCellValue, bool bIsMonthSpelledOut)
+        int CalculateDateByDay(string _dateCellValue, bool bIsMonthSpelledOut, EDateByMonth _dateByMonth)
         {
             int _dateByNum = -1;
 
             if (bIsMonthSpelledOut)
             {
-                if (_dateCellValue.ToLower().Contains("june"))
-                {
-                    return CalculateDayFromDateSpelledOut(_dateCellValue, "june".Length);
-                }
-                if (_dateCellValue.ToLower().Contains("may"))
-                {
-                    return CalculateDayFromDateSpelledOut(_dateCellValue, "may".Length);
-                }
-                return -1;
+                return CalculateDayFromDateSpelledOut(_dateCellValue, _dateByMonth.ToString().Length);
             }
 
             //If 4th Char Has Slash, Day is Single Digit
