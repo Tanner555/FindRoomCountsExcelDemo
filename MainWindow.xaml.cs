@@ -456,12 +456,21 @@ namespace FindRoomCountsExcelDemo
 
         int CalculateDateByDay(string _dateCellValue, bool bIsMonthSpelledOut)
         {
+            int _dateByNum = -1;
+
             if (bIsMonthSpelledOut)
             {
+                if (_dateCellValue.ToLower().Contains("june"))
+                {
+                    return CalculateDayFromDateSpelledOut(_dateCellValue, "june".Length);
+                }
+                if (_dateCellValue.ToLower().Contains("may"))
+                {
+                    return CalculateDayFromDateSpelledOut(_dateCellValue, "may".Length);
+                }
                 return -1;
             }
 
-            int _dateByNum = -1;
             //If 4th Char Has Slash, Day is Single Digit
             if (_dateCellValue[3] == '/' &&
                 int.TryParse(_dateCellValue[2].ToString(), out _dateByNum))
@@ -475,7 +484,26 @@ namespace FindRoomCountsExcelDemo
                 return _dateByNum;
             }
 
-            return -1;
+            return _dateByNum;
+        }
+
+        int CalculateDayFromDateSpelledOut(string _dateCellValue, int _monthCharCount)
+        {
+            int _dateByNum = -1;
+            int _dayFirstNumIndex = _monthCharCount + 1;
+            int _daySecNumIndex = _monthCharCount + 2;
+            //If 2nd Date Char Can Be Parsed, Then Date Has Two Digits
+            if (int.TryParse(_dateCellValue[_daySecNumIndex].ToString(), out _dateByNum) &&
+                int.TryParse(_dateCellValue.Substring(_dayFirstNumIndex, 2), out _dateByNum))
+            {
+                return _dateByNum;
+            }
+            //If 1st Char Can Be Parsed And Not The 2nd, Day has One Digit
+            if (int.TryParse(_dateCellValue[_dayFirstNumIndex].ToString(), out _dateByNum))
+            {
+                return _dateByNum;
+            }
+            return _dateByNum;
         }
 
         EDateByYear CalculateDateByYear(string _dateCellValue)
