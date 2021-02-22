@@ -634,6 +634,8 @@ namespace FindRoomCountsExcelDemo
             {
                 var _timer = new MySimpleDurationTimer();
                 var _myRandom = new System.Random();
+                int _revModelPlusGroupsCount =
+                    _revModelCount + _modelsGroupedIntoMonthAYear.Count + 2;
                 using (var _package = new ExcelPackage(_outputSheetInfo))
                 {
                     var firstSheet = _package.Workbook.Worksheets.First();
@@ -642,10 +644,10 @@ namespace FindRoomCountsExcelDemo
                         //Clear And Insert Rows As Needed
                         firstSheet.Cells.Clear();
                         int _insertRowIndexRef = 2;
-                        if (firstSheet.Cells.Rows < _revModelCount + _insertRowIndexRef)
+                        if (firstSheet.Cells.Rows < _revModelPlusGroupsCount + _insertRowIndexRef)
                         {
                             SetDebugMessage("Inserting Rows into output sheet...", false);
-                            firstSheet.InsertRow(_insertRowIndexRef, _revModelCount);
+                            firstSheet.InsertRow(_insertRowIndexRef, _revModelPlusGroupsCount);
                         }
 
                         //Add Headers
@@ -663,6 +665,16 @@ namespace FindRoomCountsExcelDemo
                         int _myI = 2;
                         foreach (var (_revGroupKey, _revenueSheets) in _modelsGroupedIntoMonthAYear)
                         {
+                            //Only Add Space After The First Group Finishes
+                            if (_myI > 2)
+                            {
+                                //Add Empty Space After Every Group
+                                firstSheet.Cells[_myI, 1, _myI, 4].Clear();
+                                //firstSheet.Cells[_myI, 1, _myI, 4].Style.Fill.SetBackground(System.Drawing.Color.White);
+                                //Iterate At The Beginning of Each Group After Adding Space
+                                _myI++;
+                            }
+                            //Set Random Color And Beginning Iterative Count
                             int _beginningRange = _myI;
                             var _ramColor = GetRandomColor(_myRandom);
                             foreach (var _revenueModel in _revenueSheets)
@@ -686,8 +698,10 @@ namespace FindRoomCountsExcelDemo
                                 firstSheet.Cells[_myI, 4].Value = _revenueModel.DateByYear.ToString();
                                 firstSheet.Cells[_myI, 4].Style.Font.Size = 11.0f;
                                 firstSheet.Cells[_myI, 4].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                                //Iterate After Each Model
                                 _myI++;
                             }
+                            //Set Ending Iterative Count And Fill Background W/Random Color
                             int _endRange = _myI;
                             firstSheet.Cells[_beginningRange, 1, _endRange, 4].Style.Fill.SetBackground(_ramColor);
                         }
