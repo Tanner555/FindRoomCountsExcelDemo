@@ -463,17 +463,39 @@ namespace FindRoomCountsExcelDemo
                 return CalculateDayFromDateSpelledOut(_dateCellValue, _dateByMonth.ToString().Length);
             }
 
-            //If 4th Char Has Slash, Day is Single Digit
-            if (_dateCellValue[3] == '/' &&
-                int.TryParse(_dateCellValue[2].ToString(), out _dateByNum))
+            //If Month Is Less Than Two Digits, Use Normal Calculation,
+            //Otherwise, Shift the Index Lookup By One.
+            if(_dateByMonth != EDateByMonth.October &&
+                _dateByMonth != EDateByMonth.November &&
+                _dateByMonth != EDateByMonth.December)
             {
-                return _dateByNum;
+                //If 4th Char Has Slash, Day is Single Digit
+                if (_dateCellValue[3] == '/' &&
+                    int.TryParse(_dateCellValue[2].ToString(), out _dateByNum))
+                {
+                    return _dateByNum;
+                }
+                //If 4th Char Isn't A Slash, Day has Two Digits
+                if (_dateCellValue[3] != '/' &&
+                    int.TryParse(_dateCellValue.Substring(2, 2), out _dateByNum))
+                {
+                    return _dateByNum;
+                }
             }
-            //If 4th Char Isn't A Slash, Day has Two Digits
-            if (_dateCellValue[3] != '/' &&
-                int.TryParse(_dateCellValue.Substring(2, 2), out _dateByNum))
+            else
             {
-                return _dateByNum;
+                //If 5th Char Has Slash, Day is Single Digit
+                if (_dateCellValue[4] == '/' &&
+                    int.TryParse(_dateCellValue[3].ToString(), out _dateByNum))
+                {
+                    return _dateByNum;
+                }
+                //If 5th Char Isn't A Slash, Day has Two Digits
+                if (_dateCellValue[4] != '/' &&
+                    int.TryParse(_dateCellValue.Substring(3, 2), out _dateByNum))
+                {
+                    return _dateByNum;
+                }
             }
 
             return _dateByNum;
@@ -655,6 +677,7 @@ namespace FindRoomCountsExcelDemo
             var _yearAMonthRevGroups = new Dictionary<string, List<DailyRevenueSheetModel>>();
 
             var _organizedRevenueSheets = from _sheet in _revenueSheets
+                                         orderby _sheet.DateByDay ascending
                                          orderby _sheet.DateByMonth descending
                                          orderby _sheet.DateByYear descending
                                          select _sheet;            
