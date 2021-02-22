@@ -669,8 +669,7 @@ namespace FindRoomCountsExcelDemo
                             if (_myI > 2)
                             {
                                 //Add Empty Space After Every Group
-                                firstSheet.Cells[_myI, 1, _myI, 4].Clear();
-                                //firstSheet.Cells[_myI, 1, _myI, 4].Style.Fill.SetBackground(System.Drawing.Color.White);
+                                firstSheet.Cells[_myI, 1, _myI, 4].Clear();                                
                                 //Iterate At The Beginning of Each Group After Adding Space
                                 _myI++;
                             }
