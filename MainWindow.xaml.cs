@@ -309,11 +309,15 @@ namespace FindRoomCountsExcelDemo
             public EDateByYear DateByYear;
             public int DateByDay;
 
+            public string SheetFileName;
+            public string SheetParentFolder;
+
             public DailyRevenueSheetModel(string DateCellValue, string DateCellAddress, 
                 int RoomCountCellValue, string RoomCountCellAddress,
                 EDateByMonth DateByMonth = EDateByMonth.Undecided,
                 EDateByYear DateByYear = EDateByYear.Undecided,
-                int DateByDay = -1)
+                int DateByDay = -1,
+                string SheetFileName = "", string SheetParentFolder = "")
             {
                 this.DateCellValue = DateCellValue;
                 this.DateCellAddress = DateCellAddress;
@@ -322,6 +326,8 @@ namespace FindRoomCountsExcelDemo
                 this.DateByMonth = DateByMonth;
                 this.DateByYear = DateByYear;
                 this.DateByDay = DateByDay;
+                this.SheetFileName = SheetFileName;
+                this.SheetParentFolder = SheetParentFolder;
             }
         }
         #endregion
@@ -435,7 +441,8 @@ namespace FindRoomCountsExcelDemo
                                 _myCountTryParse, _roomCountAddress,
                                 _dateByMonthAndYear.dateByMonth, 
                                 _dateByMonthAndYear.dateByYear,
-                                _dateByMonthAndYear.dateByDay);
+                                _dateByMonthAndYear.dateByDay,
+                                _excelFileInfo.Name, _excelFileInfo.Directory.Name);
                         }
                     }
                 }
@@ -752,7 +759,7 @@ namespace FindRoomCountsExcelDemo
                             if (_myI > 2)
                             {
                                 //Add Empty Space After Every Group
-                                firstSheet.Cells[_myI, 1, _myI, 6].Clear();                                
+                                firstSheet.Cells[_myI, 1, _myI, 7].Clear();                                
                                 //Iterate At The Beginning of Each Group After Adding Space
                                 _myI++;
                             }
@@ -783,12 +790,19 @@ namespace FindRoomCountsExcelDemo
                                 firstSheet.Cells[_myI, 5].Value = _revenueModel.DateByDay;
                                 firstSheet.Cells[_myI, 5].Style.Font.Size = 11.0f;
                                 firstSheet.Cells[_myI, 5].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                                //Also Debugging FileName And Parent Directory
+                                firstSheet.Cells[_myI, 6].Value = _revenueModel.SheetFileName;
+                                firstSheet.Cells[_myI, 6].Style.Font.Size = 11.0f;
+                                firstSheet.Cells[_myI, 6].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                                firstSheet.Cells[_myI, 7].Value = _revenueModel.SheetParentFolder;
+                                firstSheet.Cells[_myI, 7].Style.Font.Size = 11.0f;
+                                firstSheet.Cells[_myI, 7].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
                                 //Iterate After Each Model
                                 _myI++;
                             }
                             //Set Ending Iterative Count And Fill Background W/Random Color
                             int _endRange = _myI;
-                            firstSheet.Cells[_beginningRange, 1, _endRange, 5].Style.Fill.SetBackground(_ramColor);
+                            firstSheet.Cells[_beginningRange, 1, _endRange, 7].Style.Fill.SetBackground(_ramColor);
                         }
                         //AutoFit Columns And Save To Sheet
                         firstSheet.Column(1).AutoFit();
@@ -796,6 +810,8 @@ namespace FindRoomCountsExcelDemo
                         firstSheet.Column(3).AutoFit();
                         firstSheet.Column(4).AutoFit();
                         firstSheet.Column(5).AutoFit();
+                        firstSheet.Column(6).AutoFit();
+                        firstSheet.Column(7).AutoFit();
                         _package.SaveAs(_outputSheetInfo);
                     }
                 }
