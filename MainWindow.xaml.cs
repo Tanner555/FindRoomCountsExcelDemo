@@ -831,25 +831,6 @@ namespace FindRoomCountsExcelDemo
         }
         #endregion
 
-        #region SimpleDurationTimer
-        class MySimpleDurationTimer
-        {
-            TimeSpan _stop;
-            TimeSpan _start;
-
-            public MySimpleDurationTimer()
-            {
-                _start = new TimeSpan(DateTime.Now.Ticks);
-            }
-
-            public TimeSpan StopWithDuration()
-            {
-                _stop = new TimeSpan(DateTime.Now.Ticks);
-                return _stop.Subtract(_start);
-            }
-        }
-        #endregion
-
         #region SettingToMainWindowHelpers
         void SetDailyRevFolderPathToSettingIfValid()
         {

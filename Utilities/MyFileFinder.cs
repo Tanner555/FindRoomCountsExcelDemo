@@ -9,7 +9,7 @@ using System.Windows;
 
 namespace MyCommonUtilities
 {
-    class MyFileFinder
+    public class MyFileFinder
     {
         #region Events
         public delegate void GenEventHandler(int _stat);
