@@ -52,29 +52,26 @@ namespace FindRoomCountsExcelDemo
         }
         #endregion
 
+        #region Properties
+        FileLoggerUtility myFileLoggerUtility
+        {
+            get
+            {
+                if(_myFileLoggerUtility == null)
+                {
+                    _myFileLoggerUtility = new FileLoggerUtility();
+                }
+                return _myFileLoggerUtility;
+            }
+        }
+        FileLoggerUtility _myFileLoggerUtility = null;
+        #endregion
+
         #region Fields
-        bool bLoggedFirstMessage = false;
         bool bReadingFiles = false;
         bool bIsExecutingRoomCountHandler = false;
 
         MyFileFinder myReader;
-        #endregion
-
-        #region Directories
-        public string _desktopDir;
-        public string _programFilesDir;
-        public string _currentExecutingDirectory;
-        public string _currentExeDirLogFile;
-        public FileInfo _currentExeDirLogFileInfo;
-
-        void SetupDirectories()
-        {
-            _desktopDir = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
-            _programFilesDir = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
-            _currentExecutingDirectory = System.IO.Path.GetDirectoryName(new Uri(Assembly.GetExecutingAssembly().CodeBase).LocalPath);
-            _currentExeDirLogFile = System.IO.Path.Combine(_currentExecutingDirectory, "FileFinderLog.log");
-            _currentExeDirLogFileInfo = new FileInfo(_currentExeDirLogFile);
-        }
         #endregion
 
         #region Initialization
@@ -83,7 +80,6 @@ namespace FindRoomCountsExcelDemo
             ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
 
             InitializeComponent();
-            SetupDirectories();
 
             bIsExecutingRoomCountHandler = false;
             bReadingFiles = false;
@@ -228,22 +224,8 @@ namespace FindRoomCountsExcelDemo
             {
                 DebugMessages.Text = $"{_msg}";
             }
-            if (!string.IsNullOrEmpty(_currentExecutingDirectory) &&
-                Directory.Exists(_currentExecutingDirectory) &&
-                !string.IsNullOrEmpty(_currentExeDirLogFile) &&
-                _currentExeDirLogFileInfo.Directory.Exists)
-            {
-                if (bLoggedFirstMessage)
-                {
-                    File.AppendAllLines(_currentExeDirLogFileInfo.FullName, new string[] { _msg });
-                }
-                else
-                {
-                    File.WriteAllLines(_currentExeDirLogFileInfo.FullName, new string[] { _msg });
-                }
-            }
 
-            bLoggedFirstMessage = true;
+            myFileLoggerUtility.AddMessageToLog(_msg);
         }
         #endregion
 
