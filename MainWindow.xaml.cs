@@ -759,15 +759,20 @@ namespace FindRoomCountsExcelDemo
                             if (_myI > 2)
                             {
                                 //Add Empty Space After Every Group
-                                firstSheet.Cells[_myI, 1, _myI, 7].Clear();                                
+                                firstSheet.Cells[_myI, 1, _myI, 8].Clear();                                
                                 //Iterate At The Beginning of Each Group After Adding Space
                                 _myI++;
                             }
                             //Set Random Color And Beginning Iterative Count
                             int _beginningRange = _myI;
                             var _ramColor = GetRandomColor(_myRandom);
+                            //Monthly Room Count
+                            int _monthlyRoomCount = 0;
+                            //Iterate Through Revenue Sheets
                             foreach (var _revenueModel in _revenueSheets)
                             {
+                                //Add All Room Counts To Monthly Room Count
+                                _monthlyRoomCount += _revenueModel.RoomCountCellValue;
                                 //Date Cell
                                 firstSheet.Cells[_myI, 1].Value = _revenueModel.DateCellValue;
                                 firstSheet.Cells[_myI, 1].Style.Font.UnderLine = true;
@@ -798,11 +803,28 @@ namespace FindRoomCountsExcelDemo
                                 firstSheet.Cells[_myI, 7].Style.Font.Size = 11.0f;
                                 firstSheet.Cells[_myI, 7].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
                                 //Iterate After Each Model
-                                _myI++;
+                                _myI++;                                
+                            }
+                            //Only Show Monthly Room Count if it's Greater than 0
+                            //And There's More Than 2 Revenue Sheets In The Monthly Group
+                            if (_monthlyRoomCount > 0 && _revenueSheets.Count > 2)
+                            {
+                                //Monthly Count Header On Row-Day Before Last, And Before Iteration
+                                firstSheet.Cells[_myI - 2, 8].Value = "Monthly Count";
+                                firstSheet.Cells[_myI - 2, 8].Style.Font.UnderLine = true;
+                                firstSheet.Cells[_myI - 2, 8].Style.Font.Italic = true;
+                                firstSheet.Cells[_myI - 2, 8].Style.Font.Size = 14.0f;
+                                firstSheet.Cells[_myI - 2, 8].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                                //Show Monthly Room Count on Last Row-Day Before Iteration
+                                firstSheet.Cells[_myI - 1, 8].Value = _monthlyRoomCount;
+                                firstSheet.Cells[_myI - 1, 8].Style.Font.UnderLine = true;
+                                firstSheet.Cells[_myI - 1, 8].Style.Font.Bold = true;
+                                firstSheet.Cells[_myI - 1, 8].Style.Font.Size = 18.0f;
+                                firstSheet.Cells[_myI - 1, 8].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
                             }
                             //Set Ending Iterative Count And Fill Background W/Random Color
                             int _endRange = _myI;
-                            firstSheet.Cells[_beginningRange, 1, _endRange, 7].Style.Fill.SetBackground(_ramColor);
+                            firstSheet.Cells[_beginningRange, 1, _endRange, 8].Style.Fill.SetBackground(_ramColor);
                         }
                         //AutoFit Columns And Save To Sheet
                         firstSheet.Column(1).AutoFit();
@@ -812,6 +834,7 @@ namespace FindRoomCountsExcelDemo
                         firstSheet.Column(5).AutoFit();
                         firstSheet.Column(6).AutoFit();
                         firstSheet.Column(7).AutoFit();
+                        firstSheet.Column(8).AutoFit();
                         _package.SaveAs(_outputSheetInfo);
                     }
                 }
