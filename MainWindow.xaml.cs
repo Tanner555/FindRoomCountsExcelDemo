@@ -766,11 +766,22 @@ namespace FindRoomCountsExcelDemo
                             //Set Random Color And Beginning Iterative Count
                             int _beginningRange = _myI;
                             var _ramColor = GetRandomColor(_myRandom);
-                            //Monthly Room Count
-                            int _monthlyRoomCount = 0;
+                            //Monthly Room Count And DateByMonthAYear
+                            int _monthlyRoomCount = 0;                            
+                            EDateByMonth _myDateByMonth = EDateByMonth.Undecided;
+                            EDateByYear _myDateByYear = EDateByYear.Undecided;
                             //Iterate Through Revenue Sheets
                             foreach (var _revenueModel in _revenueSheets)
                             {
+                                //Figure Out Which MonthAYear We're On If Undecided
+                                if(_myDateByMonth == EDateByMonth.Undecided)
+                                {
+                                    _myDateByMonth = _revenueModel.DateByMonth;
+                                }
+                                if(_myDateByYear == EDateByYear.Undecided)
+                                {
+                                    _myDateByYear = _revenueModel.DateByYear;
+                                }
                                 //Add All Room Counts To Monthly Room Count
                                 _monthlyRoomCount += _revenueModel.RoomCountCellValue;
                                 //Date Cell
@@ -806,9 +817,18 @@ namespace FindRoomCountsExcelDemo
                                 _myI++;                                
                             }
                             //Only Show Monthly Room Count if it's Greater than 0
-                            //And There's More Than 2 Revenue Sheets In The Monthly Group
-                            if (_monthlyRoomCount > 0 && _revenueSheets.Count > 2)
+                            //And There's More Than 5 Revenue Sheets In The Monthly Group
+                            if (_monthlyRoomCount > 0 && _revenueSheets.Count > 5)
                             {
+                                //If Month Is Missing Days, Then Add Missing Notifier.
+                                if (IsMonthMissingDays(_myDateByMonth, _myDateByYear, _revenueSheets.Count))
+                                {
+                                    firstSheet.Cells[_myI - 3, 8].Value = "Month Missing Days.";
+                                    firstSheet.Cells[_myI - 3, 8].Style.Font.UnderLine = true;
+                                    firstSheet.Cells[_myI - 3, 8].Style.Font.Italic = true;
+                                    firstSheet.Cells[_myI - 3, 8].Style.Font.Size = 14.0f;
+                                    firstSheet.Cells[_myI - 3, 8].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                                }
                                 //Monthly Count Header On Row-Day Before Last, And Before Iteration
                                 firstSheet.Cells[_myI - 2, 8].Value = "Monthly Count";
                                 firstSheet.Cells[_myI - 2, 8].Style.Font.UnderLine = true;
@@ -845,6 +865,50 @@ namespace FindRoomCountsExcelDemo
             {
                 MessageBox.Show("ERROR: " + ex.Message);
                 SetDebugMessage("ERROR: " + ex.Message);
+            }
+        }
+
+        bool IsMonthMissingDays(EDateByMonth _month, EDateByYear _year, int _revSheetCount)
+        {
+            return _revSheetCount != GetDayCountFromMonthAYear(_month, _year);            
+        }
+
+        int GetDayCountFromMonthAYear(EDateByMonth _month, EDateByYear _year)
+        {
+            switch (_month)
+            {
+                case EDateByMonth.Undecided:
+                    return -1;
+                case EDateByMonth.January:
+                    return 31;
+                case EDateByMonth.February:
+                    if(_year == EDateByYear.Y2020 || _year == EDateByYear.Y2024)
+                    {
+                        return 29;
+                    }
+                    return 28;
+                case EDateByMonth.March:
+                    return 31;
+                case EDateByMonth.April:
+                    return 30;
+                case EDateByMonth.May:
+                    return 31;
+                case EDateByMonth.June:
+                    return 30;
+                case EDateByMonth.July:
+                    return 31;
+                case EDateByMonth.August:
+                    return 31;
+                case EDateByMonth.September:
+                    return 30;
+                case EDateByMonth.October:
+                    return 31;
+                case EDateByMonth.November:
+                    return 30;
+                case EDateByMonth.December:
+                    return 31;
+                default:
+                    return -1;
             }
         }
 
