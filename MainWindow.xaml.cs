@@ -453,7 +453,7 @@ namespace FindRoomCountsExcelDemo
             try
             {
                 var _timer = new MySimpleDurationTimer();
-                var _myRandom = new System.Random();
+                var _colorUtil = new SimpleColorUtility();
                 int _revModelPlusGroupsCount =
                     _revModelCount + _modelsGroupedIntoMonthAYear.Count + 2;
                 using (var _package = new ExcelPackage(_outputSheetInfo))
@@ -495,7 +495,7 @@ namespace FindRoomCountsExcelDemo
                             }
                             //Set Random Color And Beginning Iterative Count
                             int _beginningRange = _myI;
-                            var _ramColor = GetRandomColor(_myRandom);
+                            var _ramColor = _colorUtil.GetRandomColor();
                             //Monthly Room Count And DateByMonthAYear
                             int _monthlyRoomCount = 0;                            
                             EDateByMonth _myDateByMonth = EDateByMonth.Undecided;
@@ -596,11 +596,6 @@ namespace FindRoomCountsExcelDemo
                 MessageBox.Show("ERROR: " + ex.Message);
                 SetDebugMessage("ERROR: " + ex.Message);
             }
-        }
-
-        System.Drawing.Color GetRandomColor(System.Random _random)
-        {            
-            return System.Drawing.Color.FromArgb(_random.Next(0, 255), _random.Next(0, 255), _random.Next(0, 255));
         }
         #endregion
 
