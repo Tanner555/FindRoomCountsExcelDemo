@@ -46,6 +46,7 @@ namespace MyCommonUtilities
         #region Initialization
         /// <summary>
         /// Creates A MonthAYear Group Using A Forward-Slash Date Formatted String. Example: 01/01/2021.
+        /// Could Also Try Using Standard Date Format. Example: January 1st, 2021.
         /// </summary>
         /// <param name="_date"></param>
         /// <returns></returns>

@@ -548,8 +548,21 @@ namespace FindRoomCountsExcelDemo
                             }
                             //Only Show Monthly Room Count if it's Greater than 0
                             //And There's More Than 5 Revenue Sheets In The Monthly Group
-                            if (_monthlyRoomCount > 0 && _revenueSheets.Count > 5)
+                            if (_monthlyRoomCount > 0 && _revenueSheets.Count > 6)
                             {
+                                //Monthly Average Room Count Header
+                                firstSheet.Cells[_myI - 5, 8].Value = "Monthly Average Count";
+                                firstSheet.Cells[_myI - 5, 8].Style.Font.UnderLine = true;
+                                firstSheet.Cells[_myI - 5, 8].Style.Font.Italic = true;
+                                firstSheet.Cells[_myI - 5, 8].Style.Font.Size = 14.0f;
+                                firstSheet.Cells[_myI - 5, 8].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                                //Monthly Average Room Count
+                                firstSheet.Cells[_myI - 4, 8].Value = 16;
+                                firstSheet.Cells[_myI - 4, 8].Style.Font.UnderLine = true;
+                                firstSheet.Cells[_myI - 4, 8].Style.Font.Bold = true;
+                                firstSheet.Cells[_myI - 4, 8].Style.Font.Size = 18.0f;
+                                firstSheet.Cells[_myI - 4, 8].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+
                                 //If Month Is Missing Days, Then Add Missing Notifier.
                                 if (MyMonthAYearGroupUtility.IsMonthMissingDays(_myDateByMonth, _myDateByYear, _revenueSheets.Count))
                                 {
