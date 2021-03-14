@@ -500,11 +500,15 @@ namespace FindRoomCountsExcelDemo
                             int _monthlyRoomCount = 0;                            
                             EDateByMonth _myDateByMonth = EDateByMonth.Undecided;
                             EDateByYear _myDateByYear = EDateByYear.Undecided;
+                            //Used To Add , Separator To Average Monthly Count Formula
+                            List<string> _monthlyCountStrList = new List<string>();
                             //Iterate Through Revenue Sheets
                             foreach (var _revenueModel in _revenueSheets)
                             {
+                                //Add Room Count Value To Monthly Average String List For Formula
+                                _monthlyCountStrList.Add(_revenueModel.RoomCountCellValue.ToString());
                                 //Figure Out Which MonthAYear We're On If Undecided
-                                if(_myDateByMonth == EDateByMonth.Undecided)
+                                if (_myDateByMonth == EDateByMonth.Undecided)
                                 {
                                     _myDateByMonth = _revenueModel.DateByMonth;
                                 }
@@ -550,19 +554,25 @@ namespace FindRoomCountsExcelDemo
                             //And There's More Than 5 Revenue Sheets In The Monthly Group
                             if (_monthlyRoomCount > 0 && _revenueSheets.Count > 6)
                             {
-                                //Monthly Average Room Count Header
-                                firstSheet.Cells[_myI - 5, 8].Value = "Monthly Average Count";
-                                firstSheet.Cells[_myI - 5, 8].Style.Font.UnderLine = true;
-                                firstSheet.Cells[_myI - 5, 8].Style.Font.Italic = true;
-                                firstSheet.Cells[_myI - 5, 8].Style.Font.Size = 14.0f;
-                                firstSheet.Cells[_myI - 5, 8].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
-                                //Monthly Average Room Count
-                                firstSheet.Cells[_myI - 4, 8].Value = 16;
-                                firstSheet.Cells[_myI - 4, 8].Style.Font.UnderLine = true;
-                                firstSheet.Cells[_myI - 4, 8].Style.Font.Bold = true;
-                                firstSheet.Cells[_myI - 4, 8].Style.Font.Size = 18.0f;
-                                firstSheet.Cells[_myI - 4, 8].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
-
+                                //Only Add Monthly Average If String List Has The Counts
+                                if (_monthlyCountStrList.Count > 0)
+                                {
+                                    //Create Average Formula By Concatting Formula With Room Counts And Close For Valid Entry
+                                    string _monthlyAverageFormula = string.Concat("=AVERAGE(",
+                                        string.Join(",", _monthlyCountStrList), ")");
+                                    //Monthly Average Room Count Header
+                                    firstSheet.Cells[_myI - 5, 8].Value = "Monthly Average Count";
+                                    firstSheet.Cells[_myI - 5, 8].Style.Font.UnderLine = true;
+                                    firstSheet.Cells[_myI - 5, 8].Style.Font.Italic = true;
+                                    firstSheet.Cells[_myI - 5, 8].Style.Font.Size = 14.0f;
+                                    firstSheet.Cells[_myI - 5, 8].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                                    //Monthly Average Room Count
+                                    firstSheet.Cells[_myI - 4, 8].Formula = _monthlyAverageFormula;
+                                    firstSheet.Cells[_myI - 4, 8].Style.Font.UnderLine = true;
+                                    firstSheet.Cells[_myI - 4, 8].Style.Font.Bold = true;
+                                    firstSheet.Cells[_myI - 4, 8].Style.Font.Size = 18.0f;
+                                    firstSheet.Cells[_myI - 4, 8].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                                }
                                 //If Month Is Missing Days, Then Add Missing Notifier.
                                 if (MyMonthAYearGroupUtility.IsMonthMissingDays(_myDateByMonth, _myDateByYear, _revenueSheets.Count))
                                 {
