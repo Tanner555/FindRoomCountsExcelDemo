@@ -20,7 +20,6 @@ using Microsoft.Win32;
 using Ookii.Dialogs.Wpf;
 using MyCommonUtilities;
 using EDateByMonth = MyCommonUtilities.MyMonthAYearGroupUtility.EDateByMonth;
-using EDateByYear = MyCommonUtilities.MyMonthAYearGroupUtility.EDateByYear;
 
 namespace FindRoomCountsExcelDemo
 {
@@ -271,7 +270,7 @@ namespace FindRoomCountsExcelDemo
 
             public int DateByDay => _myMonthAYearGroupUtility.DateByDay;
             public EDateByMonth DateByMonth => _myMonthAYearGroupUtility.DateByMonth;
-            public EDateByYear DateByYear => _myMonthAYearGroupUtility.DateByYear;
+            public int DateByYear => _myMonthAYearGroupUtility.DateByYear;
 
             public DailyRevenueSheetModel(string DateCellValue, string DateCellAddress, 
                 int RoomCountCellValue, string RoomCountCellAddress,
@@ -499,7 +498,7 @@ namespace FindRoomCountsExcelDemo
                             //Monthly Room Count And DateByMonthAYear
                             int _monthlyRoomCount = 0;                            
                             EDateByMonth _myDateByMonth = EDateByMonth.Undecided;
-                            EDateByYear _myDateByYear = EDateByYear.Undecided;
+                            int _myDateByYear = -1;
                             //Used To Add , Separator To Average Monthly Count Formula
                             List<string> _monthlyCountStrList = new List<string>();
                             //Iterate Through Revenue Sheets
@@ -512,7 +511,7 @@ namespace FindRoomCountsExcelDemo
                                 {
                                     _myDateByMonth = _revenueModel.DateByMonth;
                                 }
-                                if(_myDateByYear == EDateByYear.Undecided)
+                                if(_myDateByYear == -1)
                                 {
                                     _myDateByYear = _revenueModel.DateByYear;
                                 }

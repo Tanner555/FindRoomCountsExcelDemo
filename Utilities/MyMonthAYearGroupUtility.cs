@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -29,18 +30,13 @@ namespace MyCommonUtilities
             November = 10,
             December = 11
         }
-
-        public enum EDateByYear
-        {
-            Undecided = -1,
-            Y2017 = 0, Y2018 = 1, Y2019 = 2, Y2020 = 3, Y2021 = 4, Y2022 = 5, Y2023 = 6, Y2024 = 7, Y2025 = 8
-        }
         #endregion
 
         #region Fields
         public EDateByMonth DateByMonth;
-        public EDateByYear DateByYear;
+        public int DateByYear;
         public int DateByDay;
+
         #endregion
 
         #region Initialization
@@ -61,7 +57,7 @@ namespace MyCommonUtilities
         private MyMonthAYearGroupUtility()
         {
             this.DateByMonth = EDateByMonth.Undecided;
-            this.DateByYear = EDateByYear.Undecided;
+            this.DateByYear = -1;
         }
         #endregion
 
@@ -71,41 +67,41 @@ namespace MyCommonUtilities
             return _dayCount != GetDayCountFromMonthAYear(_monthAYearGroup.DateByMonth, _monthAYearGroup.DateByYear);
         }
 
-        public static bool IsMonthMissingDays(EDateByMonth _month, EDateByYear _year, int _dayCount)
+        public static bool IsMonthMissingDays(EDateByMonth _month, int _year, int _dayCount)
         {
             return _dayCount != GetDayCountFromMonthAYear(_month, _year);
         }
 
-        public static int GetDayCountFromMonthAYear(EDateByMonth _month, EDateByYear _year)
+        public static int GetDayCountFromMonthAYear(EDateByMonth _month, int _year)
         {
             switch (_month)
             {
                 case EDateByMonth.Undecided:
                     return -1;
                 case EDateByMonth.January:
-                    return GetDayCountFromMonthAYear(1, RetrieveYNumberByEYear(_year));
+                    return GetDayCountFromMonthAYear(1, _year);
                 case EDateByMonth.February:
-                    return GetDayCountFromMonthAYear(2, RetrieveYNumberByEYear(_year));
+                    return GetDayCountFromMonthAYear(2, _year);
                 case EDateByMonth.March:
-                    return GetDayCountFromMonthAYear(3, RetrieveYNumberByEYear(_year));
+                    return GetDayCountFromMonthAYear(3, _year);
                 case EDateByMonth.April:
-                    return GetDayCountFromMonthAYear(4, RetrieveYNumberByEYear(_year));
+                    return GetDayCountFromMonthAYear(4, _year);
                 case EDateByMonth.May:
-                    return GetDayCountFromMonthAYear(5, RetrieveYNumberByEYear(_year));
+                    return GetDayCountFromMonthAYear(5, _year);
                 case EDateByMonth.June:
-                    return GetDayCountFromMonthAYear(6, RetrieveYNumberByEYear(_year));
+                    return GetDayCountFromMonthAYear(6, _year);
                 case EDateByMonth.July:
-                    return GetDayCountFromMonthAYear(7, RetrieveYNumberByEYear(_year));
+                    return GetDayCountFromMonthAYear(7, _year);
                 case EDateByMonth.August:
-                    return GetDayCountFromMonthAYear(8, RetrieveYNumberByEYear(_year));
+                    return GetDayCountFromMonthAYear(8, _year);
                 case EDateByMonth.September:
-                    return GetDayCountFromMonthAYear(9, RetrieveYNumberByEYear(_year));
+                    return GetDayCountFromMonthAYear(9, _year);
                 case EDateByMonth.October:
-                    return GetDayCountFromMonthAYear(10, RetrieveYNumberByEYear(_year));
+                    return GetDayCountFromMonthAYear(10, _year);
                 case EDateByMonth.November:
-                    return GetDayCountFromMonthAYear(11, RetrieveYNumberByEYear(_year));
+                    return GetDayCountFromMonthAYear(11, _year);
                 case EDateByMonth.December:
-                    return GetDayCountFromMonthAYear(12, RetrieveYNumberByEYear(_year));
+                    return GetDayCountFromMonthAYear(12, _year);
                 default:
                     return -1;
             }
@@ -113,6 +109,9 @@ namespace MyCommonUtilities
 
         public static int GetDayCountFromMonthAYear(int _month, int _year)
         {
+            //If Month/Year is Undecided, then Do Not Try To Create a New DateTime
+            if (_month == -1 || _year == -1) return -1;
+
             // Create a new DateTime object with the year and month
             DateTime date = new DateTime(_year, _month, 1);
 
@@ -123,10 +122,10 @@ namespace MyCommonUtilities
             return dayCount;
         }
 
-        (EDateByMonth dateByMonth, EDateByYear dateByYear, int dateByDay) CalculateDateByMonthAndYear(string _dateCellValue)
+        (EDateByMonth dateByMonth, int dateByYear, int dateByDay) CalculateDateByMonthAndYear(string _dateCellValue)
         {
             var _dateByMonth = CalculateDateByMonth(_dateCellValue, out var bIsMonthSpelledOut);
-            return (_dateByMonth, CalculateDateByYear(_dateCellValue),
+            return (_dateByMonth, CalculateYearByDateFormatted(_dateCellValue),
                 CalculateDateByDay(_dateCellValue, bIsMonthSpelledOut, _dateByMonth));
         }
 
@@ -194,54 +193,6 @@ namespace MyCommonUtilities
                 return _dateByNum;
             }
             return _dateByNum;
-        }
-
-        EDateByYear CalculateDateByYear(string _dateCellValue)
-        {
-            if (_dateCellValue.Contains("2017"))
-                return EDateByYear.Y2017;
-            if (_dateCellValue.Contains("2018"))
-                return EDateByYear.Y2018;
-            if (_dateCellValue.Contains("2019"))
-                return EDateByYear.Y2019;
-            if (_dateCellValue.Contains("2020"))
-                return EDateByYear.Y2020;
-            if (_dateCellValue.Contains("2021"))
-                return EDateByYear.Y2021;
-            if (_dateCellValue.Contains("2022"))
-                return EDateByYear.Y2022;
-            if (_dateCellValue.Contains("2023"))
-                return EDateByYear.Y2023;
-            if (_dateCellValue.Contains("2024"))
-                return EDateByYear.Y2024;
-            if (_dateCellValue.Contains("2025"))
-                return EDateByYear.Y2025;
-
-            return EDateByYear.Undecided;
-        }
-
-        static int RetrieveYNumberByEYear(EDateByYear _year)
-        {
-            if (_year.ToString().Contains("2017"))
-                return 2017;
-            if (_year.ToString().Contains("2018"))
-                return 2018;
-            if (_year.ToString().Contains("2019"))
-                return 2019;
-            if (_year.ToString().Contains("2020"))
-                return 2020;
-            if (_year.ToString().Contains("2021"))
-                return 2021;
-            if (_year.ToString().Contains("2022"))
-                return 2022;
-            if (_year.ToString().Contains("2023"))
-                return 2023;
-            if (_year.ToString().Contains("2024"))
-                return 2024;
-            if (_year.ToString().Contains("2025"))
-                return 2025;
-
-            return -1;
         }
 
         EDateByMonth CalculateDateByMonth(string _dateCellValue, out bool bIsMonthSpelledOut)
@@ -368,6 +319,49 @@ namespace MyCommonUtilities
             }
             return false;
         }
+
+        /// <summary>
+        /// Calculate The Year By A Date Formatted (mm/dd/yy)
+        /// </summary>
+        /// <param name="dateFormatted">Date Formatted By Month/Day/Year (mm/dd/yy), IE: 12/19/2022</param>
+        /// <returns>Year In Number Form</returns>
+        int CalculateYearByDateFormatted(string dateFormatted)
+        {
+            // Define a custom format provider that includes a leading zero for single-digit days
+            var formatProvider = new MyLeadingZeroDateFormatProvider();
+
+            // Try to parse the date string using the custom format provider
+            if (DateTime.TryParse(dateFormatted, formatProvider, DateTimeStyles.None, out DateTime date))
+            {
+                // If the parsing was successful, return the year
+                return date.Year;
+            }
+            else
+            {
+                // If the parsing was not successful, return -1
+                return -1;
+            }
+        }
         #endregion
+    }
+
+    // Custom format provider that includes a leading zero for single-digit days
+    public class MyLeadingZeroDateFormatProvider : IFormatProvider, ICustomFormatter
+    {
+        public object GetFormat(Type formatType)
+        {
+            if (formatType == typeof(ICustomFormatter))
+                return this;
+            return CultureInfo.CurrentCulture.GetFormat(formatType);
+        }
+
+        public string Format(string format, object arg, IFormatProvider formatProvider)
+        {
+            if (arg is DateTime dt)
+            {
+                return dt.ToString("MM/dd/yyyy", CultureInfo.InvariantCulture);
+            }
+            return arg.ToString();
+        }
     }
 }
