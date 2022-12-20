@@ -83,36 +83,44 @@ namespace MyCommonUtilities
                 case EDateByMonth.Undecided:
                     return -1;
                 case EDateByMonth.January:
-                    return 31;
+                    return GetDayCountFromMonthAYear(1, RetrieveYNumberByEYear(_year));
                 case EDateByMonth.February:
-                    if (_year == EDateByYear.Y2020 || _year == EDateByYear.Y2024)
-                    {
-                        return 29;
-                    }
-                    return 28;
+                    return GetDayCountFromMonthAYear(2, RetrieveYNumberByEYear(_year));
                 case EDateByMonth.March:
-                    return 31;
+                    return GetDayCountFromMonthAYear(3, RetrieveYNumberByEYear(_year));
                 case EDateByMonth.April:
-                    return 30;
+                    return GetDayCountFromMonthAYear(4, RetrieveYNumberByEYear(_year));
                 case EDateByMonth.May:
-                    return 31;
+                    return GetDayCountFromMonthAYear(5, RetrieveYNumberByEYear(_year));
                 case EDateByMonth.June:
-                    return 30;
+                    return GetDayCountFromMonthAYear(6, RetrieveYNumberByEYear(_year));
                 case EDateByMonth.July:
-                    return 31;
+                    return GetDayCountFromMonthAYear(7, RetrieveYNumberByEYear(_year));
                 case EDateByMonth.August:
-                    return 31;
+                    return GetDayCountFromMonthAYear(8, RetrieveYNumberByEYear(_year));
                 case EDateByMonth.September:
-                    return 30;
+                    return GetDayCountFromMonthAYear(9, RetrieveYNumberByEYear(_year));
                 case EDateByMonth.October:
-                    return 31;
+                    return GetDayCountFromMonthAYear(10, RetrieveYNumberByEYear(_year));
                 case EDateByMonth.November:
-                    return 30;
+                    return GetDayCountFromMonthAYear(11, RetrieveYNumberByEYear(_year));
                 case EDateByMonth.December:
-                    return 31;
+                    return GetDayCountFromMonthAYear(12, RetrieveYNumberByEYear(_year));
                 default:
                     return -1;
             }
+        }
+
+        public static int GetDayCountFromMonthAYear(int _month, int _year)
+        {
+            // Create a new DateTime object with the year and month
+            DateTime date = new DateTime(_year, _month, 1);
+
+            // Get the number of days in the month by subtracting the first day of the next month from the first day of this month
+            int dayCount = (date.AddMonths(1) - date).Days;
+
+            // Return the day count
+            return dayCount;
         }
 
         (EDateByMonth dateByMonth, EDateByYear dateByYear, int dateByDay) CalculateDateByMonthAndYear(string _dateCellValue)
@@ -210,6 +218,30 @@ namespace MyCommonUtilities
                 return EDateByYear.Y2025;
 
             return EDateByYear.Undecided;
+        }
+
+        static int RetrieveYNumberByEYear(EDateByYear _year)
+        {
+            if (_year.ToString().Contains("2017"))
+                return 2017;
+            if (_year.ToString().Contains("2018"))
+                return 2018;
+            if (_year.ToString().Contains("2019"))
+                return 2019;
+            if (_year.ToString().Contains("2020"))
+                return 2020;
+            if (_year.ToString().Contains("2021"))
+                return 2021;
+            if (_year.ToString().Contains("2022"))
+                return 2022;
+            if (_year.ToString().Contains("2023"))
+                return 2023;
+            if (_year.ToString().Contains("2024"))
+                return 2024;
+            if (_year.ToString().Contains("2025"))
+                return 2025;
+
+            return -1;
         }
 
         EDateByMonth CalculateDateByMonth(string _dateCellValue, out bool bIsMonthSpelledOut)
