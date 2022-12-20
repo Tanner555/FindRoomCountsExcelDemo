@@ -19,7 +19,6 @@ using OfficeOpenXml;
 using Microsoft.Win32;
 using Ookii.Dialogs.Wpf;
 using MyCommonUtilities;
-using EDateByMonth = MyCommonUtilities.MyMonthAYearGroupUtility.EDateByMonth;
 
 namespace FindRoomCountsExcelDemo
 {
@@ -269,8 +268,9 @@ namespace FindRoomCountsExcelDemo
             public string SheetParentFolder;
 
             public int DateByDay => _myMonthAYearGroupUtility.DateByDay;
-            public EDateByMonth DateByMonth => _myMonthAYearGroupUtility.DateByMonth;
+            public int DateByMonth => _myMonthAYearGroupUtility.DateByMonth;
             public int DateByYear => _myMonthAYearGroupUtility.DateByYear;
+            public string MonthSpelledOut => _myMonthAYearGroupUtility.MonthSpelledOut;
 
             public DailyRevenueSheetModel(string DateCellValue, string DateCellAddress, 
                 int RoomCountCellValue, string RoomCountCellAddress,
@@ -497,7 +497,7 @@ namespace FindRoomCountsExcelDemo
                             var _ramColor = _colorUtil.GetRandomColor();
                             //Monthly Room Count And DateByMonthAYear
                             int _monthlyRoomCount = 0;                            
-                            EDateByMonth _myDateByMonth = EDateByMonth.Undecided;
+                            int _myDateByMonth = -1;
                             int _myDateByYear = -1;
                             //Used To Add , Separator To Average Monthly Count Formula
                             List<string> _monthlyCountStrList = new List<string>();
@@ -507,7 +507,7 @@ namespace FindRoomCountsExcelDemo
                                 //Add Room Count Value To Monthly Average String List For Formula
                                 _monthlyCountStrList.Add(_revenueModel.RoomCountCellValue.ToString());
                                 //Figure Out Which MonthAYear We're On If Undecided
-                                if (_myDateByMonth == EDateByMonth.Undecided)
+                                if (_myDateByMonth == -1)
                                 {
                                     _myDateByMonth = _revenueModel.DateByMonth;
                                 }
@@ -530,7 +530,7 @@ namespace FindRoomCountsExcelDemo
                                 firstSheet.Cells[_myI, 2].Style.Font.Size = 18.0f;
                                 firstSheet.Cells[_myI, 2].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
                                 //Debugging Month, Year and Date Grouping
-                                firstSheet.Cells[_myI, 3].Value = _revenueModel.DateByMonth.ToString();
+                                firstSheet.Cells[_myI, 3].Value = _revenueModel.MonthSpelledOut;
                                 firstSheet.Cells[_myI, 3].Style.Font.Size = 11.0f;
                                 firstSheet.Cells[_myI, 3].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
                                 firstSheet.Cells[_myI, 4].Value = _revenueModel.DateByYear.ToString();
