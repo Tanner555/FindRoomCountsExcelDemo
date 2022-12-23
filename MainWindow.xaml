@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FindRoomCountsExcelDemo"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="500" Width="1000">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="20"/>
@@ -37,21 +37,20 @@
                  Text="Find Room Counts Excel Demo" Grid.ColumnSpan="3"
                  Margin="0,0,0,10"/>
         <!--Daily Revenue Folder-->
-        <TextBlock Grid.Column="1" Grid.Row="2" FontWeight="SemiBold"
-                   Text="Daily Revenue Folder: " FontFamily="Segoe UI"
-                   Margin="0,0,10,0"/>
-        <TextBlock x:Name="DailyRevenueFolderPath" Grid.Column="2" Grid.Row="2" FontWeight="Light" FontSize="11"
-                   Text="Daily/Revenue/Folder/Path" FontFamily="Segoe UI"
-                   Margin="0,0,10,0"/>
+        <TextBlock Style="{StaticResource LabelStyle}" Grid.Column="1" Grid.Row="2"
+               Text="Daily Revenue Folder: " FontFamily="Segoe UI"
+               Margin="0,0,10,0"/>
+        <TextBlock Style="{StaticResource TextBlockStyle}" x:Name="DailyRevenueFolderPath" Grid.Column="2" Grid.Row="2" 
+               Text="Daily/Revenue/Folder/Path" FontFamily="Segoe UI"
+               Margin="0,0,10,0"/>
         <Button x:Name="btnFindDailyRevFolder" Grid.Column="3" Grid.Row="2" Margin="0,0,8,0" Content="....."/>
 
         <!--Output Excel File Location-->
-        <TextBlock Grid.Column="1" Grid.Row="3" FontWeight="SemiBold"
-                   Text="Output Revenue File Path: " FontFamily="Segoe UI"
-                   Margin="0,0,10,0"/>
-        <TextBlock x:Name="OutputRevenueFilePath" Grid.Column="2" Grid.Row="3" FontWeight="Light" FontSize="11"
-                   Text="Output/Revenue/File/Path.xlsx" FontFamily="Segoe UI"
-                   />
+        <TextBlock Style="{StaticResource LabelStyle}" Grid.Column="1" Grid.Row="3"
+               Text="Output Revenue File Path: " FontFamily="Segoe UI"
+               Margin="0,0,10,0"/>
+        <TextBlock Style="{StaticResource TextBlockStyle}" x:Name="OutputRevenueFilePath" Grid.Column="2" Grid.Row="3"
+               Text="Output/Revenue/File/Path.xlsx" FontFamily="Segoe UI"/>
         <Button x:Name="btnFindOutputRevenueFile" Grid.Column="3" Grid.Row="3" Margin="0,0,8,0" Content="....."/>
 
         <!--End-->
@@ -79,13 +78,12 @@
         <TextBlock x:Name="RevenueFilesReadStat" Text="0" Grid.Column="5" Grid.Row="5"
                  Width="150"/>
 
-        <TextBlock Grid.Column="1" Grid.Row="5" FontWeight="SemiBold"
-                   Text="Debug Messages: " FontFamily="Segoe UI"
-                   Margin="0,0,10,0"/>
+        <TextBlock Style="{StaticResource LabelStyle}" Grid.Column="1" Grid.Row="5"
+               Text="Debug Messages: " FontFamily="Segoe UI"
+               Margin="0,0,10,0"/>
         <TextBlock x:Name="DebugMessages" Text="Sample Message" Grid.Column="2" Grid.Row="5" Grid.ColumnSpan ="4"
                  Width="600"/>
 
-        <Button x:Name="btn_findAndOutputRoomCounts" Content="Find and Output Room Counts" Grid.Column="1"
-                Grid.Row="6" Grid.RowSpan="2" Grid.ColumnSpan="2" Margin="25" Style="{StaticResource buttonStyle}" />
+        <Button x:Name="btn_findAndOutputRoomCounts" Style="{StaticResource buttonStyle}" Content="Find and Output Room Counts" Grid.Column="1" Grid.Row="6" Grid.RowSpan="2" Grid.ColumnSpan="2" Margin="25"/>
     </Grid>
 </Window>
