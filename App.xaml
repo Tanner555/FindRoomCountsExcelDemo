@@ -4,44 +4,46 @@
              xmlns:local="clr-namespace:FindRoomCountsExcelDemo"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-        <Style TargetType="Grid">
-            <Setter Property="Background" Value="AliceBlue"/>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Light.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Primary/MaterialDesignColor.DeepPurple.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Accent/MaterialDesignColor.Lime.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
 
-        </Style>
+            <!--Material Design Styles-->
+            <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignFlatButton}" />
+            <Style TargetType="{x:Type ComboBox}" BasedOn="{StaticResource MaterialDesignComboBox}" />
+            <Style TargetType="{x:Type ComboBoxItem}" BasedOn="{StaticResource MaterialDesignComboBoxItemStyle}" />
+            <Style TargetType="TextBox" BasedOn="{StaticResource MaterialDesignTextBox}" />
+            <Style TargetType="{x:Type ScrollViewer}" BasedOn="{StaticResource MaterialDesignScrollViewer}" />
+            <Style TargetType="{x:Type Label}" BasedOn="{StaticResource MaterialDesignLabel}" />
 
-        <Style TargetType="Button" x:Key="buttonStyle">
-            <Setter Property="Background" Value="YellowGreen"/>
-            <Setter Property="TextElement.FontStyle" Value="Italic"/>
-            <Setter Property="BorderBrush" Value="Red"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="Width" Value="400"/>
-            <Setter Property="Height" Value="50"/>
-            <Setter Property="FontSize" Value="18"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="HorizontalContentAlignment" Value="Center"/>
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <!--TextBlockStyle-->
+            <Style x:Key="TextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource MaterialDesignBody2TextBlock}">
+                <Setter Property="FontSize" Value="11"/>
+                <Setter Property="Margin" Value="5"/>
+                <Setter Property="VerticalAlignment" Value="Center"/>
+            </Style>
 
-        </Style>
+            <!--Modified LabelStyle-->
+            <Style x:Key="LabelStyle" TargetType="TextBlock" BasedOn="{StaticResource MaterialDesignBody1TextBlock}" >
+                <Setter Property="FontSize" Value="16"/>
+                <Setter Property="Margin" Value="5"/>
+                <Setter Property="VerticalAlignment" Value="Center"/>
+            </Style>
 
-        <Style x:Key="comboStyle" TargetType="ComboBox">
-            <Setter Property="Margin" Value="10"/>
-        </Style>
-
-        <!--TextBlockStyle-->
-        <Style x:Key="TextBlockStyle" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="11"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="Foreground" Value="Black"/>
-            <Setter Property="Margin" Value="5"/>
-        </Style>
-
-        <!--Modified LabelStyle-->
-        <Style x:Key="LabelStyle" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="16"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="Foreground" Value="Black"/>
-            <Setter Property="Margin" Value="5"/>
-        </Style>
-        
+            <Style TargetType="Button" x:Key="buttonStyle" BasedOn="{StaticResource MaterialDesignFlatAccentBgButton}">
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="Width" Value="400"/>
+                <Setter Property="Height" Value="50"/>
+                <Setter Property="FontSize" Value="18"/>
+                <Setter Property="FontWeight" Value="Bold"/>
+                <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                <!--<Setter Property="Background" Value="{DynamicResource MaterialDesignPaper}"/>-->
+            </Style>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>
